@@ -23,7 +23,9 @@ class App extends Component {
         tasks: [...this.state.tasks, task]
       })
     }
-    this.state({loading: false})
+    this.setState({loading: false})
+
+   
 }
 
 constructor(props) {
@@ -34,6 +36,8 @@ constructor(props) {
     tasks: [],
     loading: true
   }
+  this.createTask = this.createTask.bind(this)
+  this.baseState = this.state 
 
 }
 
@@ -42,6 +46,9 @@ createTask(content) {
   this.state.todoList.methods.createTask(content).send({ from: this.state.account })
   .once('receipt', (receipt) => {
     this.setState({ loading: false })
+    this.setState(this.baseState)
+    this.loadBlockchainData()
+
 })
 }
 
@@ -58,32 +65,12 @@ render() {
       </nav>
       <div className="container-fluid">
         <div className="row">
-          <main role="main" className="col-lg-12 d-flex justify-content-center">
-            <div id="loader" className="text-center">
-              <p className="text-center">Loading...</p>
-            </div>
-            <div id="content">
-              <form>
-                <input id="newTask" type="text" className="form-control" placeholder="Add task..." required />
-                <input type="submit" hidden="" />
-                <p>Your account: {this.state.account}</p>
-              </form>
-              <ul id="taskList" className="list-unstyled">
-                { this.state.tasks.map((task, key) => {
-                  return(
-                    <div className="taskTemplate" className="checkbox" key={key}>
-                      <label>
-                        <input type="checkbox" />
-                        <span className="content">{task.content}</span>
-                      </label>
-                    </div>
-                  )
-                })}
-              </ul>
-              <ul id="completedTaskList" className="list-unstyled">
-              </ul>
-            </div>
-          </main>
+        <main role="main" className="col-lg-12 d-flex justify-content-center">
+          { this.state.loading
+              ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
+              : <TodoList tasks={this.state.tasks} createTask={this.createTask} />
+          }
+        </main>
         </div>
       </div>
     </div>
