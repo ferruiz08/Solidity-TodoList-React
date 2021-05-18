@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Web3 from 'web3'
 import './App.css'
 import { TODO_LIST_ABI, TODO_LIST_ADDRESS } from './config'
-import TodoList from './TodoList'
+import TodoList from './Todolist'
 
 class App extends Component {
   componentWillMount() {
@@ -10,7 +10,7 @@ class App extends Component {
   }
 
   async loadBlockchainData() {
-    const web3 = new Web3(Web3.givenProvider || "http://localhost:7545")
+    const web3 = new Web3(Web3.givenProvider)
     const accounts = await web3.eth.getAccounts()
     this.setState({ account: accounts[0] })
     const todoList = new web3.eth.Contract(TODO_LIST_ABI, TODO_LIST_ADDRESS)
@@ -43,6 +43,7 @@ createTask(content) {
   .once('receipt', (receipt) => {
     this.setState({ loading: false })
 })
+}
 
 render() {
   return (
@@ -65,6 +66,7 @@ render() {
               <form>
                 <input id="newTask" type="text" className="form-control" placeholder="Add task..." required />
                 <input type="submit" hidden="" />
+                <p>Your account: {this.state.account}</p>
               </form>
               <ul id="taskList" className="list-unstyled">
                 { this.state.tasks.map((task, key) => {
@@ -86,7 +88,7 @@ render() {
       </div>
     </div>
   );
-}
-}
+              }
+            }
 
 export default App;
