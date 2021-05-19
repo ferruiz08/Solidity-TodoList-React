@@ -10,9 +10,10 @@ class App extends Component {
   }
 
   async loadBlockchainData() {
-    const web3 = new Web3(Web3.givenProvider)
+    const web3 = new Web3(Web3.currentProvider|| "http://localhost:7545")
     const accounts = await web3.eth.getAccounts()
     this.setState({ account: accounts[0] })
+    
     const todoList = new web3.eth.Contract(TODO_LIST_ABI, TODO_LIST_ADDRESS)
     this.setState({ todoList })
     const taskCount = await todoList.methods.taskCount().call()
@@ -37,6 +38,7 @@ constructor(props) {
     loading: true
   }
   this.createTask = this.createTask.bind(this)
+  this.toggleCompleted = this.toggleCompleted.bind(this)
   this.baseState = this.state 
 
 }
@@ -50,6 +52,16 @@ createTask(content) {
     this.loadBlockchainData()
 
 })
+}
+
+toggleCompleted(taskId) {
+  this.setState({ loading: true })
+  this.state.todoList.methods.toggleCompleted(taskId).send({ from: this.state.account })
+  .once('receipt', (receipt) => {
+    this.setState({ loading: false })
+    this.setState(this.baseState)
+    this.loadBlockchainData()
+  })
 }
 
 render() {
@@ -68,9 +80,11 @@ render() {
         <main role="main" className="col-lg-12 d-flex justify-content-center">
           { this.state.loading
               ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
-              : <TodoList tasks={this.state.tasks} createTask={this.createTask} />
+              : <TodoList tasks={this.state.tasks} createTask={this.createTask} account={this.state.account}  toggleCompleted={this.toggleCompleted}/>
           }
+                   
         </main>
+        
         </div>
       </div>
     </div>
