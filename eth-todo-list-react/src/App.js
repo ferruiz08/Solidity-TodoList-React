@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Web3 from 'web3'
 import './App.css'
 import { TODO_LIST_ABI, TODO_LIST_ADDRESS } from './config'
-import TodoList from './Todolist'
+import todoList from './todolist'
 
 class App extends Component {
   componentWillMount() {
@@ -80,7 +80,7 @@ render() {
         <main role="main" className="col-lg-12 d-flex justify-content-center">
           { this.state.loading
               ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div>
-              : <TodoList tasks={this.state.tasks} createTask={this.createTask} account={this.state.account}  toggleCompleted={this.toggleCompleted}/>
+              : <todoList tasks={this.state.tasks} createTask={this.createTask} account={this.state.account}  toggleCompleted={this.toggleCompleted}/>
           }
                    
         </main>
